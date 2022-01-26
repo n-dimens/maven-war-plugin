@@ -20,6 +20,7 @@ package org.apache.maven.plugins.war;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import java.util.List;
  */
 public class Overlay
 {
+    private MavenProject project;
 
     /**
      * The list of default includes.
@@ -315,6 +317,16 @@ public class Overlay
     public void setType( String type )
     {
         this.type = type;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
     }
 
     @Override

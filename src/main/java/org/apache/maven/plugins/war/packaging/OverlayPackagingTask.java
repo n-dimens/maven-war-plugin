@@ -22,6 +22,7 @@ package org.apache.maven.plugins.war.packaging;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.war.Overlay;
 import org.apache.maven.plugins.war.util.PathSet;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -113,6 +114,15 @@ public class OverlayPackagingTask
     protected File unpackOverlay( WarPackagingContext context, Overlay overlay )
         throws MojoExecutionException
     {
+        if ( overlay.getProject() != null )
+        {
+            final File webappDir = getDefaultWebappDir( overlay.getProject() );
+            if ( webappDir.exists() && webappDir.isDirectory() )
+            {
+                return webappDir;
+            }
+        }
+
         final File tmpDir = getOverlayTempDirectory( context, overlay );
 
         // TODO: not sure it's good, we should reuse the markers of the dependency plugin
@@ -126,6 +136,13 @@ public class OverlayPackagingTask
             context.getLog().debug( "Overlay [" + overlay + "] was already unpacked" );
         }
         return tmpDir;
+    }
+
+    private static File getDefaultWebappDir( MavenProject project )
+    {
+        final String artifactName = String.format( "%s-%s", project.getArtifactId(), project.getVersion() );
+        final String defaultWebappDir = String.format( "target/%s", artifactName );
+        return new File( project.getBasedir(), defaultWebappDir );
     }
 
     /**

@@ -164,7 +164,7 @@ public abstract class AbstractWarPackagingTask
                    throws IOException
                {
                    copyFile( context, file, targetFile, targetFilename,
-                             false );
+                             true );
                }
     
                public void alreadyRegistered( String ownerId,

@@ -483,7 +483,7 @@ public abstract class AbstractWarMojo
 
         final OverlayManager overlayManager =
             new OverlayManager( overlays, mavenProject, getDependentWarIncludes(), getDependentWarExcludes(),
-                                currentProjectOverlay );
+                                currentProjectOverlay, getSession() );
         // CHECKSTYLE_ON: LineLength
         List<FileUtils.FilterWrapper> defaultFilterWrappers;
         try

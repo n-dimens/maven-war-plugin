@@ -64,8 +64,8 @@
   <properties>
     <mavenArchiverVersion>3.5.0</mavenArchiverVersion>
     <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
-    <mavenVersion>3.1.0</mavenVersion>
-    <javaVersion>7</javaVersion>
+    <mavenVersion>3.8.4</mavenVersion>
+    <javaVersion>8</javaVersion>
     <project.build.outputTimestamp>2021-09-05T09:31:59Z</project.build.outputTimestamp>
   </properties>
 
@@ -154,12 +154,12 @@
     <dependency>
       <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-api</artifactId>
-      <version>0.9.0.M2</version>
+      <version>1.0.2.v20150114</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.sisu</groupId>
       <artifactId>org.eclipse.sisu.plexus</artifactId>
-      <version>0.0.0.M2a</version>
+      <version>0.3.5</version>
     </dependency>
     
     <dependency>

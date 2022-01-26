@@ -155,6 +155,9 @@ public class WarMojo
     @Parameter( property = "maven.war.skip", defaultValue = "false" )
     private boolean skip;
 
+    @Parameter( property = "war.pack", defaultValue = "true" )
+    private boolean pack = true;
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
@@ -207,46 +210,50 @@ public class WarMojo
         throws IOException, ManifestException, DependencyResolutionRequiredException, MojoExecutionException,
         MojoFailureException
     {
-        getLog().info( "Packaging webapp" );
+        getLog().info( "Packaging webapp [156]" );
 
         buildExplodedWebapp( getWebappDirectory() );
 
-        MavenArchiver archiver = new MavenArchiver();
-
-        archiver.setArchiver( warArchiver );
-
-        archiver.setCreatedBy( "Maven WAR Plugin", "org.apache.maven.plugins", "maven-war-plugin" );
-
-        archiver.setOutputFile( warFile );
-
-        // configure for Reproducible Builds based on outputTimestamp value
-        archiver.configureReproducible( outputTimestamp );
-
-        getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() )
-            + " from the generated webapp archive." );
-        getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
-
-        warArchiver.addDirectory( getWebappDirectory(), getPackagingIncludes(), getPackagingExcludes() );
-
-        final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
-        if ( webXmlFile.exists() )
+        if ( pack )
         {
-            warArchiver.setWebxml( webXmlFile );
+            MavenArchiver archiver = new MavenArchiver();
+
+            archiver.setArchiver( warArchiver );
+
+            archiver.setCreatedBy( "Maven WAR Plugin", "org.apache.maven.plugins", "maven-war-plugin" );
+
+            archiver.setOutputFile( warFile );
+
+            // configure for Reproducible Builds based on outputTimestamp value
+            archiver.configureReproducible( outputTimestamp );
+
+            getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() )
+                    + " from the generated webapp archive." );
+            getLog().debug(
+                    "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
+
+            warArchiver.addDirectory( getWebappDirectory(), getPackagingIncludes(), getPackagingExcludes() );
+
+            final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
+            if ( webXmlFile.exists() )
+            {
+                warArchiver.setWebxml( webXmlFile );
+            }
+
+            warArchiver.setRecompressAddedZips( isRecompressZippedFiles() );
+
+            warArchiver.setIncludeEmptyDirs( isIncludeEmptyDirectories() );
+
+            if ( Boolean.FALSE.equals( failOnMissingWebXml )
+                    || ( failOnMissingWebXml == null && isProjectUsingAtLeastServlet30() ) )
+            {
+                getLog().debug( "Build won't fail if web.xml file is missing." );
+                warArchiver.setExpectWebXml( false );
+            }
+
+            // create archive
+            archiver.createArchive( getSession(), getProject(), getArchive() );
         }
-
-        warArchiver.setRecompressAddedZips( isRecompressZippedFiles() );
-
-        warArchiver.setIncludeEmptyDirs( isIncludeEmptyDirectories() );
-
-        if ( Boolean.FALSE.equals( failOnMissingWebXml )
-            || ( failOnMissingWebXml == null && isProjectUsingAtLeastServlet30() ) )
-        {
-            getLog().debug( "Build won't fail if web.xml file is missing." );
-            warArchiver.setExpectWebXml( false );
-        }
-
-        // create archive
-        archiver.createArchive( getSession(), getProject(), getArchive() );
 
         // create the classes to be attached if necessary
         if ( isAttachClasses() )
